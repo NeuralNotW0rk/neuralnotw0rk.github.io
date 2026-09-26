@@ -1,3 +1,4 @@
+// Bounding (hyper)box dimensions
 let width = 600;
 let height = 600;
 let depth = 600;
@@ -5,10 +6,10 @@ let redth = 600;
 let greenth = 600;
 let blueth = 600;
 
-let r = 10;
-let n = 100;
+let r = 10; // Ball radius
+let n = 100; // Number of balls
 
-// Position
+// Positions
 let cx = new Array(n).fill(0);
 let cy = new Array(n).fill(0);
 let cz = new Array(n).fill(0);
@@ -16,7 +17,7 @@ let cr = new Array(n).fill(0);
 let cg = new Array(n).fill(0);
 let cb = new Array(n).fill(0);
 
-// Velocity
+// Velocities
 let cxp = new Array(n).fill(0);
 let cyp = new Array(n).fill(0);
 let czp = new Array(n).fill(0);
@@ -24,10 +25,10 @@ let crp = new Array(n).fill(0);
 let cgp = new Array(n).fill(0);
 let cbp = new Array(n).fill(0);
 
-let drag = 0.01;
-let elast = 0.9;
+let drag = 0.01; // Drag coefficient (0-1)
+let elast = 0.9; // Collision elasticity (0-1)
 
-let bg = true;
+let bg = true; // Background toggle
 
 function setup() {
     createCanvas(width, height);
@@ -46,8 +47,8 @@ function draw() {
     if (bg){
         background(0);
     }
-
     for (let i = 0; i < n; i++) {
+        // Update positions
         cx[i] += cxp[i];
         cy[i] += cyp[i];
         cz[i] += czp[i];
@@ -55,25 +56,30 @@ function draw() {
         cg[i] += cgp[i];
         cb[i] += cbp[i];
 
-        // Bounce
+        // Bounce X
         if (cx[i] >= width - r || cx[i] <= r) {
             cxp[i] = -cxp[i] * elast;
         }
+        // Bounce Y
         if (cy[i] >= height - r) {
             cyp[i] = -cyp[i] * elast;
         } else {
-            // Gravity
+            // Gravity (don't add while touching ground)
             cyp[i] += 1;
         }
+        // Bounce Z
         if (cz[i] >= depth - r || cz[i] <= r) {
             czp[i] = -czp[i] * elast;
         }
+        // Bounce R
         if (cr[i] >= redth - r || cr[i] <= r) {
             crp[i] = -crp[i] * elast;
         }
+        // Bounce G
         if (cg[i] >= greenth - r || cg[i] <= r) {
             cgp[i] = -cgp[i] * elast;
         }
+        // Bounce B
         if (cb[i] >= blueth - r || cb[i] <= r) {
             cbp[i] = -cbp[i] * elast;
         }
@@ -87,15 +93,16 @@ function draw() {
         cbp[i] *= 1 - drag;
 
         noStroke();
+        // R, G, and B positions determine ball color
         fill(cr[i] / redth * 255, cg[i] / greenth * 255, cb[i] / blueth * 255, 200);
+        // X and Y behave normally, while Z scales ball size (0.5 at furthest distance)
         circle(cx[i], cy[i], r * (cz[i] + depth) / depth);
     }
 
 }
 
-// Click strength and random variation
-let accel = 0.1;
-let v = 100;
+let accel = 0.1; // Click acceleration factor
+let v = 100; // Random variability of click location
 
 function mousePressed() {
     for (let i = 0; i < n; i++) {
