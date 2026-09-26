@@ -6,8 +6,8 @@ let redth = 600;
 let greenth = 600;
 let blueth = 600;
 
-let r = 10; // Ball radius
-let n = 100; // Number of balls
+let r = 5; // Ball radius
+let n = 1000; // Number of balls
 
 // Positions
 let cx = new Array(n).fill(0);
@@ -29,6 +29,28 @@ let drag = 0.01; // Drag coefficient (0-1)
 let elast = 0.9; // Collision elasticity (0-1)
 
 let bg = true; // Background toggle
+
+/**
+ * Check for boundaries and reverse direction on collision.
+ * Also force ball within boundary to prevent clipping.
+ * Takes pos and vel as objects to sync with main loop.
+ * @param {int[]} pos Elementwise position vector
+ * @param {int[]} vel Elementwise velocity vector
+ * @param {int} index Element index
+ * @param {int} range Size of bounded area
+ * @param {boolean} ceiling Check ceiling (max value)
+ * @param {boolean} floor Check floor (min value)
+ */
+function bounce(pos, vel, index, range, ceiling, floor) {
+     if (ceiling && pos[index] >= range - r) {
+        vel[index] = -vel[index] * elast;
+        pos[index] = range - r + 1;
+    }
+    if (floor && pos[index] <= r) {
+        vel[index] = -vel[index] * elast;
+        pos[index] = r - 1;
+    }
+}
 
 function setup() {
     createCanvas(width, height);
@@ -56,33 +78,16 @@ function draw() {
         cg[i] += cgp[i];
         cb[i] += cbp[i];
 
-        // Bounce X
-        if (cx[i] >= width - r || cx[i] <= r) {
-            cxp[i] = -cxp[i] * elast;
-        }
-        // Bounce Y
-        if (cy[i] >= height - r) {
-            cyp[i] = -cyp[i] * elast;
-        } else {
-            // Gravity (don't add while touching ground)
-            cyp[i] += 1;
-        }
-        // Bounce Z
-        if (cz[i] >= depth - r || cz[i] <= r) {
-            czp[i] = -czp[i] * elast;
-        }
-        // Bounce R
-        if (cr[i] >= redth - r || cr[i] <= r) {
-            crp[i] = -crp[i] * elast;
-        }
-        // Bounce G
-        if (cg[i] >= greenth - r || cg[i] <= r) {
-            cgp[i] = -cgp[i] * elast;
-        }
-        // Bounce B
-        if (cb[i] >= blueth - r || cb[i] <= r) {
-            cbp[i] = -cbp[i] * elast;
-        }
+        // Check for boundary collisions
+        bounce(cx, cxp, i, width, true, true);
+        bounce(cy, cyp, i, height, true, false); // Open top
+        bounce(cz, czp, i, width, true, true);
+        bounce(cr, crp, i, redth, true, true);
+        bounce(cg, cgp, i, greenth, true, true);
+        bounce(cb, cbp, i, blueth, true, true);
+        
+        // Gravity
+        cyp[i] += 1;
 
         // Drag
         cxp[i] *= 1 - drag;
