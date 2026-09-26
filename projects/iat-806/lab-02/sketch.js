@@ -112,6 +112,7 @@ function mousePressed() {
 }
 
 function keyPressed(){
+    // Toggle background (turn off to stack frames)
     if (key === 't') {
         bg = !bg;
     }
