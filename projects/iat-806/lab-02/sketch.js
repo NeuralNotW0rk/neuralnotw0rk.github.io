@@ -1,29 +1,34 @@
 // Bounding (hyper)box dimensions
-let width = 600;
-let height = 600;
-let depth = 600;
-let redth = 600;
-let greenth = 600;
-let blueth = 600;
+const width = 600;
+const height = 600;
+const depth = 600;
+const redth = 600;
+const greenth = 600;
+const blueth = 600;
 
-let r = 5; // Ball radius
-let n = 1000; // Number of balls
+const n_max = 1000;
+const n_min = 1;
+const r_max = 100;
+const r_min = 2;
+
+let n = 10; // Number of balls
+let r = 10; // Ball radius
 
 // Positions
-let cx = new Array(n).fill(0);
-let cy = new Array(n).fill(0);
-let cz = new Array(n).fill(0);
-let cr = new Array(n).fill(0);
-let cg = new Array(n).fill(0);
-let cb = new Array(n).fill(0);
+let cx = new Array(n_max).fill(0);
+let cy = new Array(n_max).fill(0);
+let cz = new Array(n_max).fill(0);
+let cr = new Array(n_max).fill(0);
+let cg = new Array(n_max).fill(0);
+let cb = new Array(n_max).fill(0);
 
 // Velocities
-let cxp = new Array(n).fill(0);
-let cyp = new Array(n).fill(0);
-let czp = new Array(n).fill(0);
-let crp = new Array(n).fill(0);
-let cgp = new Array(n).fill(0);
-let cbp = new Array(n).fill(0);
+let cxp = new Array(n_max).fill(0);
+let cyp = new Array(n_max).fill(0);
+let czp = new Array(n_max).fill(0);
+let crp = new Array(n_max).fill(0);
+let cgp = new Array(n_max).fill(0);
+let cbp = new Array(n_max).fill(0);
 
 let drag = 0.01; // Drag coefficient (0-1)
 let elast = 0.9; // Collision elasticity (0-1)
@@ -55,7 +60,7 @@ function bounce(pos, vel, index, range, ceiling, floor) {
 function setup() {
     createCanvas(width, height);
     // Random starting point in 6D
-    for (let i = 0; i < n; i++) {
+    for (let i = 0; i < n_max; i++) {
         cx[i] = random(r, width - r);
         cy[i] = random(r, height - r);
         cz[i] = random(r, depth - r);
@@ -104,6 +109,9 @@ function draw() {
         circle(cx[i], cy[i], r * (cz[i] + depth) / depth);
     }
 
+    fill(255)
+    text("balls: " + n, 50, 50)
+    text("radius: " + r, 50, 70)
 }
 
 let accel = 0.1; // Click acceleration factor
@@ -127,5 +135,17 @@ function keyPressed(){
     // Toggle background (turn off to stack frames)
     if (key === 't') {
         bg = !bg;
+    }
+    if (key === 'q' && n < n_max) {
+        n++;
+    }
+    if (key === 'a' && n >= n_min + 1) {
+        n--;
+    }
+    if (key === 'w' && r < r_max) {
+        r++;
+    }
+    if (key === 's' && r >= r_min + 1) {
+        r--;
     }
 }
