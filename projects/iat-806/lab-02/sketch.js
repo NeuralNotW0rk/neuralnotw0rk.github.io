@@ -27,6 +27,8 @@ let cbp = new Array(n).fill(0);
 let drag = 0.01;
 let elast = 0.9;
 
+let bg = true;
+
 function setup() {
     createCanvas(width, height);
     // Random starting point in 6D
@@ -41,7 +43,9 @@ function setup() {
 }
 
 function draw() {
-    background(20);
+    if (bg){
+        background(0);
+    }
 
     for (let i = 0; i < n; i++) {
         cx[i] += cxp[i];
@@ -97,12 +101,18 @@ function mousePressed() {
     for (let i = 0; i < n; i++) {
         // Move toward mouse
         cxp[i] += (mouseX - cx[i] + random(-v, v)) * accel;
-        cyp[i] += (mouseY - cy[i] + random(-v, v)) * accel;
+        cyp[i] += (mouseY - cy[i] + random(-v, v)  ) * accel;
 
         // Move toward "center"
         czp[i] += (depth / 2 - cz[i] + random(-v, v)) * accel;
         crp[i] += (redth / 2 - cr[i] + random(-v, v)) * accel;
         cgp[i] += (greenth / 2 - cg[i] + random(-v, v)) * accel;
         cbp[i] += (blueth / 2 - cb[i] + random(-v, v)) * accel;
+    }
+}
+
+function keyPressed(){
+    if (key === 't') {
+        bg = !bg;
     }
 }
